@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yachthafen Lindow | Liegeplätze, Hallenlager & Service</title>
+  <meta name="description" content="Ihr Yachthafen am Gudelacksee in Brandenburg. Liegeplätze, Winterlager, Yachtcharter und erstklassiger Service für Ihr Boot.">
+  <meta name="theme-color" content="#1e3a5f">
+  <link rel="icon" href="img/logo-yachthafen-lindow-emblem.svg" type="image/svg+xml">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Hausschrift: Inter (variabel, mit optischer Größe) – eine Familie für Text und Headlines -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#f0ede8',
+            foreground: '#1e3a5f',
+            card: '#f7f5f2',
+            'card-foreground': '#1e3a5f',
+            primary: '#1e3a5f',
+            'primary-foreground': '#f7f5f2',
+            secondary: '#243a54',
+            'secondary-foreground': '#f7f5f2',
+            muted: '#e8e4de',
+            'muted-foreground': '#4a6485',
+            accent: '#d4a574',
+            'accent-foreground': '#1e3a5f',
+            border: '#1e3a5f',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            // Headlines laufen in derselben Grotesk wie das Logo, nur enger und kräftiger
+            display: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    /* ==================== GRUNDLAGEN ==================== */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Headlines: gleiche Grotesk wie das Logo, nur enger gesetzt */
+    h1, h2, h3, h4, .font-display {
+      font-variation-settings: 'opsz' 32;
+      letter-spacing: -0.022em;
+      font-weight: 600;
+    }
+    h1 { letter-spacing: -0.032em; }
+
+    /* Konturlos: keine Rahmen, keine Outlines – Tiefe entsteht über Fläche und Schatten.
+       Fokus-Ringe bleiben erhalten, sonst wäre die Seite per Tastatur nicht bedienbar. */
+    *:focus { outline: none; }
+    *:focus-visible {
+      outline: 3px solid #d4a574;
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* Scrollbar im Mobilmenü ausblenden */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* ==================== BEWEGUNG ==================== */
+    /* Eine gemeinsame Kurve für alles, damit die Seite wie ein Stück wirkt */
+    :root {
+      --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+      --dur: 0.55s;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+    .animate-bounce { animation: bounce 1.8s var(--ease-smooth) infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .animate-spin { animation: spin 1s linear infinite; }
+
+    /* Scroll-Reveal: Elemente blenden beim Erscheinen weich ein */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+    /* gestaffelt, wenn mehrere Karten nebeneinander liegen */
+    .reveal[data-delay="1"] { transition-delay: 0.09s; }
+    .reveal[data-delay="2"] { transition-delay: 0.18s; }
+    .reveal[data-delay="3"] { transition-delay: 0.27s; }
+    .reveal[data-delay="4"] { transition-delay: 0.36s; }
+
+    /* Bilder blenden nach dem Laden ein statt hart aufzupoppen */
+    img[loading="lazy"] {
+      opacity: 0;
+      transition: opacity 0.7s var(--ease-smooth);
+    }
+    img[loading="lazy"].is-loaded,
+    .no-js img[loading="lazy"] { opacity: 1; }
+
+    /* ==================== INTERAKTION ==================== */
+    /* Buttons und Kacheln skalieren weich und dezent */
+    .btn,
+    .tile {
+      transition: transform var(--dur) var(--ease-smooth),
+                  box-shadow var(--dur) var(--ease-smooth),
+                  background-color var(--dur) var(--ease-smooth),
+                  color var(--dur) var(--ease-smooth);
+      will-change: transform;
+    }
+    .btn:hover { transform: scale(1.035); }
+    .btn:active { transform: scale(0.99); }
+    .tile:hover { transform: scale(1.015); }
+    .tile:active { transform: scale(1.005); }
+
+    /* Bild in einer Kachel zieht beim Hover minimal mit */
+    .tile img,
+    .media-zoom img {
+      transition: transform 0.9s var(--ease-smooth);
+    }
+    .tile:hover img,
+    .media-zoom:hover img,
+    .group:hover .media-zoom img {
+      transform: scale(1.06);
+    }
+
+    /* ==================== AUFKLAPPBARE KACHELN ==================== */
+    .accordion-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.55s var(--ease-smooth);
+    }
+    .accordion-panel > div {
+      overflow: hidden;
+      min-height: 0;
+    }
+    .accordion-panel.is-open { grid-template-rows: 1fr; }
+    .accordion-icon { transition: transform 0.45s var(--ease-smooth); }
+    .accordion-trigger[aria-expanded="true"] .accordion-icon { transform: rotate(180deg); }
+
+    /* ==================== SERVICE-TICKER ==================== */
+    .ticker {
+      --ticker-duration: 45s;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    .ticker.is-running { overflow: hidden; }
+    .ticker.is-running .ticker-track {
+      animation: ticker-scroll var(--ticker-duration) linear infinite;
+      will-change: transform;
+    }
+    .ticker.is-running:hover .ticker-track,
+    .ticker.is-running:focus-within .ticker-track {
+      animation-play-state: paused;
+    }
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ==================== STANDORTKARTEN ==================== */
+    .location-card { background-color: #f7f5f2; }
+    .location-card.is-active { background-color: #1e3a5f; }
+    .location-card.is-active .font-display { color: #f7f5f2; }
+    .location-card.is-active p { color: rgba(247, 245, 242, 0.78); }
+    .location-card.is-active a { color: #d4a574; }
+    .location-card.is-active .loc-icon { background-color: rgba(247, 245, 242, 0.16); }
+    .location-card.is-active .loc-icon svg { color: #d4a574; }
+
+    /* ==================== PARTNER-LOGOS ==================== */
+    .partner-logo img {
+      filter: grayscale(1);
+      opacity: 0.5;
+      transition: filter 0.6s var(--ease-smooth),
+                  opacity 0.6s var(--ease-smooth),
+                  transform 0.6s var(--ease-smooth);
+    }
+    .partner-logo:hover img,
+    .partner-logo:focus-visible img {
+      filter: grayscale(0);
+      opacity: 1;
+      transform: scale(1.08);
+    }
+
+    /* ==================== SONSTIGES ==================== */
+    /* Sprungmarken nicht unter den fixierten Header scrollen lassen */
+    section[id] { scroll-margin-top: 9rem; }
+
+    /* Weiche Trennung statt Linie */
+    .soft-divide {
+      background-image: linear-gradient(to right, transparent, rgba(247,245,242,0.18), transparent);
+      height: 1px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      img[loading="lazy"] { opacity: 1; transition: none; }
+      .accordion-panel,
+      .accordion-icon,
+      .partner-logo img,
+      .btn,
+      .tile,
+      .tile img,
+      .media-zoom img { transition: none; }
+      .btn:hover,
+      .tile:hover,
+      .tile:hover img,
+      .media-zoom:hover img { transform: none; }
+      .animate-bounce { animation: none; }
+      .ticker.is-running .ticker-track { animation: none; }
+      .ticker.is-running { overflow-x: auto; }
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased bg-background text-foreground">
+
+  <!-- ==================== HEADER ==================== -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="#" class="btn flex items-center shrink-0" aria-label="Yachthafen Lindow – zur Startseite">
+          <img src="img/logo-yachthafen-lindow.svg" alt="Yachthafen Lindow"
+               class="h-9 sm:h-11 w-auto" width="561" height="76"
+               loading="eager" fetchpriority="high" decoding="async">
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#yachthafen" class="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">Yachthafen</a>
+          <a href="#yachtcharter" class="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">Yachtcharter</a>
+          <a href="#aktuelles" class="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">Aktuelles</a>
+          <a href="#partner" class="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">Partner</a>
+          <a href="#kontakt" class="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">Kontakt</a>
+        </nav>
+
+        <!-- CTA Button - Desktop -->
+        <a href="#kontakt" class="hidden md:inline-flex items-center px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium text-sm shadow-lg hover:shadow-xl transition-all btn">
+          Anfrage stellen
+        </a>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-foreground hover:text-primary transition-colors" aria-label="Menü öffnen">
+          <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu" class="md:hidden hidden py-4">
+        <nav class="flex flex-col gap-4">
+          <a href="#yachthafen" class="mobile-nav-link text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2">Yachthafen</a>
+          <a href="#yachtcharter" class="mobile-nav-link text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2">Yachtcharter</a>
+          <a href="#aktuelles" class="mobile-nav-link text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2">Aktuelles</a>
+          <a href="#partner" class="mobile-nav-link text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2">Partner</a>
+          <a href="#kontakt" class="mobile-nav-link text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2">Kontakt</a>
+          <a href="#kontakt" class="mobile-nav-link inline-flex items-center justify-center px-5 py-3 bg-primary text-primary-foreground rounded-lg font-medium text-sm shadow-lg mt-2 btn">
+            Anfrage stellen
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ==================== SERVICE-TICKER ==================== -->
+    <div class="bg-primary text-primary-foreground">
+      <div id="service-ticker" class="ticker no-scrollbar relative">
+        <div class="ticker-track flex w-max">
+          <ul class="ticker-list flex items-center gap-8 sm:gap-10 pr-8 sm:pr-10 py-2.5">
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="14" cy="4" r="1.6" fill="currentColor" stroke="none"/>
+                <path d="M12.5 8v4.5h4l2.4 5"/>
+                <path d="M16.5 12.5h2.4"/>
+                <circle cx="11" cy="15.5" r="5.5"/>
+              </svg>
+              <span class="text-sm">Barrierefreie Toilette und Dusche</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 12.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5M5 10h14M4 6h16l-1 14H5L4 6z"/>
+              </svg>
+              <span class="text-sm">Hafenbistro</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              <span class="text-sm">Elektro-Anschluss am Steg</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3.5c3 3.5 5 6 5 8.5a5 5 0 11-10 0c0-2.5 2-5 5-8.5z"/>
+              </svg>
+              <span class="text-sm">Trinkwasser-Anschluss am Steg</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              <span class="text-sm">Fäkalien- und Chemie-WC-Entsorgung</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2a1 1 0 011 1v1.07A7.002 7.002 0 0119 11a1 1 0 11-2 0 5 5 0 00-4-4.9V17h3a1 1 0 110 2h-3v2a1 1 0 11-2 0v-2H8a1 1 0 110-2h3V6.1A5 5 0 007 11a1 1 0 11-2 0 7.002 7.002 0 016-6.93V3a1 1 0 011-1zm0 3a2 2 0 110 4 2 2 0 010-4z"/>
+              </svg>
+              <span class="text-sm">Dauerliegeplätze</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v1.5m0 15V21m9-9h-1.5m-15 0H3m15.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m12.72 0l-1.06-1.06M6.7 6.7L5.64 5.64M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              <span class="text-sm">Saisonliegeplätze</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 4v12M12 4l6 9h-6M4 16h16l-2.5 4.5H6.5L4 16z"/>
+              </svg>
+              <span class="text-sm">Gastliegeplätze</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+              </svg>
+              <span class="text-sm">Winterlager / Hallenlager</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 3h14a1 1 0 011 1v16a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                <path d="M12 18a4.5 4.5 0 100-9 4.5 4.5 0 000 9z"/>
+                <path d="M7.5 6.5h.01M10.5 6.5h.01"/>
+              </svg>
+              <span class="text-sm">Waschmaschine / Trockner</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              <span class="text-sm">Müllentsorgung</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm">Gastraum mit SAT-TV</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              <span class="text-sm">Einkaufsmöglichkeiten im Ort – Lebensmitteldiscounter, Tankstelle, Post</span>
+            </li>
+            <li class="flex items-center gap-2.5 whitespace-nowrap">
+              <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.905-3.905 10.237-3.905 14.142 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+              </svg>
+              <span class="text-sm">WLAN im gesamten Hafen- und Stegbereich</span>
+            </li>
+          </ul>
+          <!-- Zweite Kopie der Liste wird per JavaScript erzeugt (nahtlose Schleife) -->
+        </div>
+        <!-- weiche Kanten links/rechts -->
+        <div class="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-primary to-transparent"></div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-primary to-transparent"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="min-h-screen">
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0">
+        <img src="img/IMG_6857.jpg" alt="" aria-hidden="true"
+             class="w-full h-full object-cover"
+             fetchpriority="high" decoding="async"
+             onerror="this.onerror=null;this.src='img/IMG_6877.jpg';">
+        <!-- Heller Schleier, damit die dunkelblaue Typo auf jedem Headerbild lesbar bleibt -->
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/25 via-background/70 to-background/95"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto pt-32">
+        <!-- Logo -->
+        <img src="img/logo-yachthafen-lindow.svg" alt="Yachthafen Lindow"
+             class="w-full max-w-sm sm:max-w-lg mx-auto mb-10" width="561" height="76"
+             fetchpriority="high" decoding="async">
+
+        <!-- Main Heading -->
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-primary mb-6 leading-[1.05]">
+          Ihr Hafen am Gudelacksee
+        </h1>
+
+        <!-- Tagline -->
+        <p class="text-lg sm:text-xl md:text-2xl text-foreground/90 mb-4 font-medium">
+          Liegeplätze <span class="text-accent">|</span> Hallenlager <span class="text-accent">|</span> Service
+        </p>
+
+        <!-- Subheadline -->
+        <p class="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+          80 Liegeplätze, Hallen- und Freilager, Werkstatt und Hafenbistro – mitten
+          im Ruppiner Seenland, eine Stunde nördlich von Berlin.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="#kontakt" class="btn w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold text-base shadow-2xl">
+            Liegeplatz anfragen
+          </a>
+          <a href="#yachtcharter" class="btn w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-background/80 backdrop-blur-sm text-foreground rounded-xl font-semibold text-base shadow-lg">
+            Yachtcharter entdecken
+          </a>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <a href="#yachthafen" class="flex flex-col items-center gap-2 text-foreground/60 hover:text-primary transition-colors group">
+          <span class="text-xs font-medium tracking-wider uppercase">Entdecken</span>
+          <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ==================== YACHTHAFEN SECTION ==================== -->
+    <section id="yachthafen" class="py-24 sm:py-32 bg-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="reveal text-center mb-16 sm:mb-20">
+          <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl text-secondary-foreground mb-4">
+            Yachthafen
+          </h2>
+          <p class="text-lg sm:text-xl text-accent max-w-2xl mx-auto leading-relaxed">
+            Mehr Service. Mehr Komfort. Mehr Zeit auf dem Wasser.
+          </p>
+        </div>
+
+        <!-- Services: volle Breite, Bild abwechselnd links/rechts, aufklappbar -->
+        <div class="space-y-6 lg:space-y-8">
+
+          <!-- Service 1: Liegeplätze (Bild links) -->
+          <article class="group grid md:grid-cols-2 bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-colors duration-300 tile reveal">
+            <!-- Bild -->
+            <div class="relative aspect-[4/3] md:aspect-auto md:min-h-[22rem] overflow-hidden">
+              <img src="img/IMG_6842.JPG" alt="Liegeplätze am Gudelacksee" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-secondary/50 via-transparent to-transparent"></div>
+            </div>
+            <!-- Text -->
+            <div class="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a1 1 0 011 1v1.07A7.002 7.002 0 0119 11a1 1 0 11-2 0 5 5 0 00-4-4.9V17h3a1 1 0 110 2h-3v2a1 1 0 11-2 0v-2H8a1 1 0 110-2h3V6.1A5 5 0 007 11a1 1 0 11-2 0 7.002 7.002 0 016-6.93V3a1 1 0 011-1zm0 3a2 2 0 110 4 2 2 0 010-4z"/>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">FÜR IHRE BOOTE</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl xl:text-4xl text-secondary-foreground mb-3">Liegeplätze</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed">Sichere und gepflegte Liegeplätze direkt am malerischen Gudelacksee.</p>
+
+              <!-- Trigger -->
+              <button type="button" class="accordion-trigger mt-6 self-start inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all rounded" aria-expanded="false" aria-controls="panel-liegeplaetze">
+                <span class="accordion-label">Mehr erfahren</span>
+                <svg class="accordion-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+
+              <!-- Aufklappbarer Inhalt -->
+              <div id="panel-liegeplaetze" class="accordion-panel">
+                <div>
+                  <div class="pt-6 mt-6 text-secondary-foreground/70 leading-relaxed space-y-4">
+                    <p>80 Liegeplätze an barrierefreien Stegen mit seitlichem Ausstieg, dazu Freigelände und Hallenlager. Strom und Wasser liegen direkt am Steg, Sanitäranlagen, Hafenbistro und Ortszentrum sind wenige Schritte entfernt.</p>
+
+                    <div class="grid sm:grid-cols-3 gap-3">
+                      <div class="bg-secondary-foreground/10 rounded-xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-accent font-semibold mb-1">Dauerlieger</p>
+                        <p class="text-secondary-foreground font-display text-lg">ab 90 € / Monat</p>
+                        <p class="text-sm">12 Monate inkl. Winterfreilager</p>
+                      </div>
+                      <div class="bg-secondary-foreground/10 rounded-xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-accent font-semibold mb-1">Saisonlieger</p>
+                        <p class="text-secondary-foreground font-display text-lg">auf Anfrage</p>
+                        <p class="text-sm">Bitte sprechen Sie uns an</p>
+                      </div>
+                      <div class="bg-secondary-foreground/10 rounded-xl p-4">
+                        <p class="text-xs uppercase tracking-wider text-accent font-semibold mb-1">Gastlieger</p>
+                        <p class="text-secondary-foreground font-display text-lg">2,50 € / m · Nacht</p>
+                        <p class="text-sm">April bis Oktober, bis 12.00 Uhr</p>
+                      </div>
+                    </div>
+
+                    <ul class="space-y-2">
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Dauerliegeplatz nach Bootslänge: 90 € bis 5 m, 210 € bis 10 m, 300 € bis 12 m – über 13 m auf Anfrage</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Winterlager in der Halle statt im Freien: Aufschlag 30 %, Sommer-Trailerstellplatz inklusive</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Strom 0,80 € / kWh, Wasser 2 € / 100 l, Fäkalienentsorgung 10 € pro Tank, WLAN kostenfrei</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Sanitäranlagen, Waschmaschine und Trockner, Müllentsorgung, nachts bewachte Anlage</span></li>
+                    </ul>
+                    <p class="text-sm text-secondary-foreground/55">Bootslänge jeweils inklusive aller Anbauteile. Alle Preise enthalten die gesetzliche Mehrwertsteuer; Kranen und Slippen werden gesondert berechnet.</p>
+                    <a href="#kontakt" class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium shadow-lg hover:shadow-xl transition-all btn">
+                      Liegeplatz anfragen
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service 2: Winterlager (Bild rechts) -->
+          <article class="group grid md:grid-cols-2 bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-colors duration-300 tile reveal">
+            <!-- Bild -->
+            <div class="relative aspect-[4/3] md:aspect-auto md:min-h-[22rem] overflow-hidden md:order-2">
+              <img src="img/Halle.jpg" alt="Hallenlager für Boote" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-secondary/50 via-transparent to-transparent"></div>
+            </div>
+            <!-- Text -->
+            <div class="p-6 sm:p-8 lg:p-12 flex flex-col justify-center md:order-1">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">IN UNSEREN HALLEN</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl xl:text-4xl text-secondary-foreground mb-3">Winterlager</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed">Geschützte Hallenlagerung für Ihr Boot während der kalten Jahreszeit.</p>
+
+              <!-- Trigger -->
+              <button type="button" class="accordion-trigger mt-6 self-start inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all rounded" aria-expanded="false" aria-controls="panel-winterlager">
+                <span class="accordion-label">Mehr erfahren</span>
+                <svg class="accordion-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+
+              <!-- Aufklappbarer Inhalt -->
+              <div id="panel-winterlager" class="accordion-panel">
+                <div>
+                  <div class="pt-6 mt-6 text-secondary-foreground/70 leading-relaxed space-y-4">
+                    <p>Hallenlager ganzjährig nach Vereinbarung. Wie viel Platz frei ist, lässt sich immer nur kurzfristig sagen – rufen Sie uns dazu am besten an.</p>
+
+                    <div class="bg-secondary-foreground/10 rounded-xl p-4 sm:p-5">
+                      <p class="text-xs uppercase tracking-wider text-accent font-semibold mb-3">Hallenlager pro Monat</p>
+                      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+                        <div class="flex justify-between gap-3"><dt>bis 5 m</dt><dd class="text-secondary-foreground font-medium">70 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>bis 6 m</dt><dd class="text-secondary-foreground font-medium">100 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>bis 7 m</dt><dd class="text-secondary-foreground font-medium">130 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>bis 8 m</dt><dd class="text-secondary-foreground font-medium">150 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>bis 9 m</dt><dd class="text-secondary-foreground font-medium">180 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>bis 10 m</dt><dd class="text-secondary-foreground font-medium">210 €</dd></div>
+                      </dl>
+                    </div>
+
+                    <ul class="space-y-2">
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Satz Lagerböcke oder Lagerhölzer: 50 € pro Monat</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Kranen mit dem Autokran: 100 € bis 5 m bis 340 € bis 13 m, darüber auf Anfrage</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Slippen mit Hydraulikslipwagen und Schlepper nach Vereinbarung, Transport gesondert</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Überbreite Boote wie Hausboote und Flöße nach gesonderter Absprache</span></li>
+                    </ul>
+                    <p class="text-sm text-secondary-foreground/55">Bootslänge inklusive aller Anbauteile. Abrechnung per Rechnung nach Vertragsabschluss.</p>
+                    <a href="#kontakt" class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium shadow-lg hover:shadow-xl transition-all btn">
+                      Winterlager anfragen
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service 3: Service (Bild links) -->
+          <article class="group grid md:grid-cols-2 bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-colors duration-300 tile reveal">
+            <!-- Bild -->
+            <div class="relative aspect-[4/3] md:aspect-auto md:min-h-[22rem] overflow-hidden">
+              <img src="img/IMG_7619.jpg" alt="Service und Bootselektrik" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-secondary/50 via-transparent to-transparent"></div>
+            </div>
+            <!-- Text -->
+            <div class="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">AUFBEREITUNG UND ELEKTRIK</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl xl:text-4xl text-secondary-foreground mb-3">Service</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed">Professionelle Wartung und Reparatur durch unser erfahrenes Team.</p>
+
+              <!-- Trigger -->
+              <button type="button" class="accordion-trigger mt-6 self-start inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all rounded" aria-expanded="false" aria-controls="panel-service">
+                <span class="accordion-label">Mehr erfahren</span>
+                <svg class="accordion-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+
+              <!-- Aufklappbarer Inhalt -->
+              <div id="panel-service" class="accordion-panel">
+                <div>
+                  <div class="pt-6 mt-6 text-secondary-foreground/70 leading-relaxed space-y-4">
+                    <p>Von der Motorwartung bis zur kompletten Aufbereitung: Unsere Werkstatt kümmert sich um Technik und Optik Ihres Bootes – auch im Bootsbau und in der Bootselektrik.</p>
+
+                    <ul class="space-y-2">
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Unterwasserschiff reinigen, Unterwasseranstrich und Lackarbeiten, Polieren</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Motorwartung und Winterfestmachen von Boot und Motor</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Bootselektrik und Bootsbau</span></li>
+                      <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"></span><span>Zubehör wie Leinen, Fender und Festmacher</span></li>
+                    </ul>
+
+                    <div class="bg-secondary-foreground/10 rounded-xl p-4 sm:p-5">
+                      <p class="text-xs uppercase tracking-wider text-accent font-semibold mb-3">Arbeitspreise</p>
+                      <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                        <div class="flex justify-between gap-3"><dt>Techniker</dt><dd class="text-secondary-foreground font-medium">90 € / Stunde</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Servicekraft</dt><dd class="text-secondary-foreground font-medium">50 € / Stunde</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Boot aus oder in die Box</dt><dd class="text-secondary-foreground font-medium">75 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Schleppen</dt><dd class="text-secondary-foreground font-medium">150 € / Stunde</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Batterieservice</dt><dd class="text-secondary-foreground font-medium">75 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Umsetzen Trailer auf Böcke</dt><dd class="text-secondary-foreground font-medium">100 €</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Trailerstellplatz außen</dt><dd class="text-secondary-foreground font-medium">25 € / Woche</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Trailerstellplatz innen</dt><dd class="text-secondary-foreground font-medium">50 € / Woche</dd></div>
+                      </dl>
+                    </div>
+                    <p class="text-sm text-secondary-foreground/55">Reinigung des Unterwasserschiffs nach Aufwand. Alle Preise inklusive gesetzlicher Mehrwertsteuer, Endpreise für Privatkunden.</p>
+                    <a href="#kontakt" class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium shadow-lg hover:shadow-xl transition-all btn">
+                      Service anfragen
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Teaser Image -->
+        <div class="reveal media-zoom mt-16 sm:mt-20 relative rounded-3xl overflow-hidden">
+          <img src="img/IMG_6843.JPG" alt="Yachthafen Lindow Marina" class="w-full h-64 sm:h-80 lg:h-96 object-cover" loading="lazy" decoding="async">
+          <div class="absolute inset-0 bg-gradient-to-r from-secondary/80 via-secondary/40 to-transparent"></div>
+          <div class="absolute inset-0 flex items-center">
+            <div class="px-8 sm:px-12 lg:px-16 max-w-xl">
+              <h3 class="font-display text-2xl sm:text-3xl lg:text-4xl text-secondary-foreground mb-4">Kranen, Slippen, Transporte</h3>
+              <p class="text-secondary-foreground/80 text-base sm:text-lg mb-6">Autokran im Frühjahr und Herbst, Slippen mit Hydraulikslipwagen nach Vereinbarung – von 100 € bis 5 m bis 340 € bis 13 m.</p>
+              <a href="#kontakt" class="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium shadow-lg hover:shadow-xl transition-all btn">
+                Jetzt anfragen
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== YACHTCHARTER SECTION ==================== -->
+    <section id="yachtcharter" class="py-24 sm:py-32 bg-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="reveal text-center mb-16 sm:mb-20">
+          <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl text-secondary-foreground mb-4">
+            Yachtcharter
+          </h2>
+          
+          <p class="text-lg sm:text-xl text-accent max-w-2xl mx-auto leading-relaxed">
+            Drei Boote, ein Heimathafen – und von hier aus das ganze Ruppiner Seenland.
+          </p>
+        </div>
+
+        <!-- Charter Options Grid -->
+        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <!-- Option 1: Buchen -->
+          <div class="group relative bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-all duration-300 tile reveal">
+            <div class="aspect-[4/3] relative overflow-hidden">
+              <img src="img/IMG_6868.jpg" alt="Buchen" class="w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent opacity-60"></div>
+            </div>
+            <div class="p-6 lg:p-8">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">Drei Boote zur Auswahl</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl text-secondary-foreground mb-3">Buchen</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed mb-4">Die <strong class="font-semibold text-secondary-foreground">Tirrenia</strong> (Husky Dane), die <strong class="font-semibold text-secondary-foreground">Traumland</strong> (Delphia 1050 Escape) und das <strong class="font-semibold text-secondary-foreground">Lounge-Floß</strong>. Wochencharter ab 800 €, Wechseltage sind Montag und Freitag.</p>
+              <a href="#kontakt" class="inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all">
+                Mehr erfahren
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Option 2: Rundfahrten -->
+          <div class="group relative bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-all duration-300 tile reveal">
+            <div class="aspect-[4/3] relative overflow-hidden">
+              <img src="img/IMG_6838.JPG" alt="Rundfahrten" class="w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent opacity-60"></div>
+            </div>
+            <div class="p-6 lg:p-8">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12M12 4l6 9h-6M4 16h16l-2.5 4.5H6.5L4 16z"></path>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">Mit der MS Dorothee</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl text-secondary-foreground mb-3">Rundfahrten</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed mb-4">Rund zwei Stunden über Gudelacksee, Rhin und Möllensee und zurück. Fahrten nach Ihren Wünschen richten wir gern ein.</p>
+              <a href="#kontakt" class="inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all">
+                Mehr erfahren
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Option 3: Revier -->
+          <div class="group relative bg-secondary-foreground/5 rounded-2xl overflow-hidden hover:bg-secondary-foreground/10 transition-all duration-300 tile reveal">
+            <div class="aspect-[4/3] relative overflow-hidden">
+              <img src="img/IMG_6856.jpg" alt="Revier" class="w-full h-full object-cover transition-transform duration-500" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent opacity-60"></div>
+            </div>
+            <div class="p-6 lg:p-8">
+              <div class="flex items-center gap-3 mb-3">
+                <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                </svg>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">Ohne Führerschein</span>
+              </div>
+              <h3 class="font-display text-2xl lg:text-3xl text-secondary-foreground mb-3">Revier</h3>
+              <p class="text-secondary-foreground/70 leading-relaxed mb-4">Von Lindow über Neuruppin bis Kremmen fahren Sie ohne Führerschein – mit unserem Charterschein für 85 €, den Sie in etwa drei Stunden Einweisung erhalten.</p>
+              <a href="#kontakt" class="inline-flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all">
+                Mehr erfahren
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== AKTUELLES SECTION ==================== -->
+    <section id="aktuelles" class="py-24 sm:py-32 relative overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0">
+        <img src="img/IMG_6878.jpg" alt="Boote im Hafen" class="w-full h-full object-cover" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-primary/60 backdrop-blur-[2px]"></div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="reveal text-center mb-16 sm:mb-20">
+          <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl text-primary-foreground mb-4">
+            Aktuelles
+          </h2>
+          <div class="w-24 h-1 bg-accent mx-auto rounded-full"></div>
+        </div>
+
+        <!-- News Cards -->
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+          <!-- News 1 -->
+          <div class="bg-card/95 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-2xl transition-all duration-300 tile reveal">
+            <div class="inline-flex items-center gap-2 mb-4 px-3 py-1.5 bg-primary/10 rounded-full">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span class="text-xs font-semibold text-primary">Frühjahr &amp; Herbst</span>
+            </div>
+            <h3 class="font-display text-xl sm:text-2xl text-card-foreground mb-3">Krantermine</h3>
+            <p class="text-muted-foreground leading-relaxed mb-6">Gekrant wird mit dem Autokran jeweils einmal im Frühjahr und im Herbst, die Termine geben wir rechtzeitig bekannt. Slippen mit Hydraulikslipwagen und Schlepper ist nach Vereinbarung jederzeit möglich. Wir bitten in beiden Fällen um telefonische Anmeldung.</p>
+            <div class="flex items-center gap-3 p-3 bg-muted rounded-lg">
+              <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+              </svg>
+              <div>
+                <p class="text-xs text-muted-foreground">Anmeldung unter:</p>
+                <a href="tel:03393371908" class="font-semibold text-foreground hover:text-primary transition-colors">033933 71908</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- News 2 -->
+          <div class="bg-card/95 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-2xl transition-all duration-300 tile reveal">
+            <div class="inline-flex items-center gap-2 mb-4 px-3 py-1.5 bg-primary/10 rounded-full">
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span class="text-xs font-semibold text-primary">April bis Oktober</span>
+            </div>
+            <h3 class="font-display text-xl sm:text-2xl text-card-foreground mb-3">Gastlieger willkommen</h3>
+            <p class="text-muted-foreground leading-relaxed mb-6">Von April bis Oktober liegen Sie bei uns für 2,50 € pro Meter und Nacht, Sanitäranlagen und Wertstoffentsorgung inklusive. Der Platz steht bis 12.00 Uhr des Folgetages zur Verfügung. Anmeldung direkt beim Hafenmeister.</p>
+            <div class="flex items-center gap-3 p-3 bg-muted rounded-lg">
+              <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+              </svg>
+              <div>
+                <p class="text-xs text-muted-foreground">Hafenmeister:</p>
+                <a href="tel:+4915237616018" class="font-semibold text-foreground hover:text-primary transition-colors">0152 37616018</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ANGEBOTE / PARTNER SECTION ==================== -->
+    <section id="partner" class="py-24 sm:py-32 bg-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Angebote Grid – beide Blöcke führen auf externe Seiten und sind farblich abgesetzt -->
+        <div class="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-20">
+
+          <!-- Angebot 1: Hafenbar (warm abgesetzt) -->
+          <a href="https://www.instagram.com/yachthafen_lindow/" target="_blank" rel="noopener noreferrer"
+             class="tile group reveal block rounded-3xl overflow-hidden bg-accent/[0.18] shadow-xl">
+            <div class="media-zoom relative aspect-[16/10] overflow-hidden">
+              <img src="img/IMG_6849.jpg" alt="Hafenbistro am Steg" class="w-full h-full object-cover" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t from-secondary/70 via-transparent to-transparent"></div>
+            </div>
+            <div class="p-6 sm:p-8 lg:p-10">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-accent/25">
+                  <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5M5 10h14M4 6h16l-1 14H5L4 6z"></path>
+                  </svg>
+                </span>
+                <span class="text-xs font-semibold tracking-wider text-accent uppercase">Direkt am Wasser</span>
+              </div>
+              <h3 class="font-display text-3xl sm:text-4xl text-secondary-foreground mb-4">Hafenbar</h3>
+              <p class="text-secondary-foreground/75 text-lg leading-relaxed mb-6">
+                Kaffee, kühle Getränke und eine Kleinigkeit zu essen – unter Palmen mit Blick auf die Stege.
+                Was gerade läuft und wann geöffnet ist, zeigen wir auf Instagram.
+              </p>
+              <span class="inline-flex items-center gap-2 text-accent font-semibold">
+                Auf Instagram ansehen
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              </span>
+            </div>
+          </a>
+
+          <!-- Angebot 2: Hausboote (kühl abgesetzt) -->
+          <a href="https://leise-los.de/" target="_blank" rel="noopener noreferrer"
+             class="tile group reveal block rounded-3xl overflow-hidden bg-secondary-foreground/[0.12] shadow-xl" data-delay="1">
+            <div class="media-zoom relative aspect-[16/10] overflow-hidden">
+              <img src="img/IMG_6852.jpg" alt="Hausboote auf dem Gudelacksee" class="w-full h-full object-cover" loading="lazy" decoding="async">
+              <div class="absolute inset-0 bg-gradient-to-t from-secondary/70 via-transparent to-transparent"></div>
+            </div>
+            <div class="p-6 sm:p-8 lg:p-10">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-secondary-foreground/15">
+                  <svg class="w-6 h-6 text-secondary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                  </svg>
+                </span>
+                <span class="text-xs font-semibold tracking-wider text-secondary-foreground/60 uppercase">Partner · leise los</span>
+              </div>
+              <h3 class="font-display text-3xl sm:text-4xl text-secondary-foreground mb-4">Hausboote</h3>
+              <p class="text-secondary-foreground/75 text-lg leading-relaxed mb-6">
+                Übernachten auf dem Wasser: Unser Partner <em class="not-italic font-medium text-secondary-foreground">leise los</em>
+                vermietet elektrisch angetriebene Hausboote mit Sauna und Seebüro im Ruppiner Seenland – führerscheinfrei, für bis zu sechs Personen.
+              </p>
+              <span class="inline-flex items-center gap-2 text-secondary-foreground font-semibold">
+                Zu leise-los.de
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              </span>
+            </div>
+          </a>
+
+        </div>
+
+        <!-- Partners Section -->
+        <div class="pt-12 reveal">
+          <p class="text-center text-secondary-foreground/60 font-medium mb-8">Weitere Partner</p>
+          <!-- Helle Fläche: die Partnerlogos haben teils weiße Hintergründe und
+               würden auf dem Navy als Kästen stehen -->
+          <div class="bg-card rounded-3xl px-6 py-8 sm:px-12 sm:py-10 flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-16">
+            <!-- Logos einfach in img/partner/ austauschen -->
+            <a href="https://www.marinafuehrer.adac.de/haefen/bootshafen-lindow/" target="_blank" rel="noopener noreferrer" class="partner-logo" aria-label="ADAC Marinaführer">
+              <img src="img/Logo-ADAC-Marinafuehrer.jpg" alt="ADAC Marinaführer" class="h-10 sm:h-12 w-auto mix-blend-multiply" loading="lazy">
+            </a>
+            <a href="https://www.eler.brandenburg.de" target="_blank" rel="noopener noreferrer" class="partner-logo" aria-label="ELER Brandenburg">
+              <img src="img/logo-brb.png" alt="ELER Brandenburg" class="h-10 sm:h-12 w-auto mix-blend-multiply" loading="lazy">
+            </a>
+            <a href="https://www.deutschertourismusverband.de/qualitaet/wassertourismus/gelbe-welle/standorte-mit-der-gelben-welle.html" target="_blank" rel="noopener noreferrer" class="partner-logo" aria-label="Gelbe Welle – Deutscher Tourismusverband">
+              <img src="img/DTV-logo.svg" alt="Gelbe Welle – Deutscher Tourismusverband" class="h-10 sm:h-12 w-auto mix-blend-multiply" loading="lazy">
+            </a>
+            <a href="https://www.torqeedo.com" target="_blank" rel="noopener noreferrer" class="partner-logo" aria-label="Torqeedo">
+              <img src="img/torqeedo-logo.png" alt="Torqeedo" class="h-10 sm:h-12 w-auto mix-blend-multiply" loading="lazy">
+            </a>
+            <a href="https://bunbo.de/bootsreviere/lindow" target="_blank" rel="noopener noreferrer" class="partner-logo" aria-label="BunBo">
+              <img src="img/Logo-BunBo.webp" alt="BunBo" class="h-10 sm:h-12 w-auto mix-blend-multiply" loading="lazy">
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== KONTAKT SECTION ==================== -->
+    <section id="kontakt" class="py-24 sm:py-32 bg-background">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="text-center mb-12 reveal">
+          <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-primary/10 rounded-full">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="text-sm font-medium text-primary">So finden Sie uns</span>
+          </div>
+          <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl text-foreground mb-4">
+            Kontakt
+          </h2>
+          <div class="w-24 h-1 bg-primary mx-auto rounded-full mb-6"></div>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Hafen, Büro und Werkstatt liegen wenige Minuten auseinander.
+            Wählen Sie den Standort, zu dem Sie möchten.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-6 lg:gap-8 items-stretch reveal">
+
+          <!-- Karte -->
+          <div class="lg:col-span-3 relative rounded-3xl overflow-hidden shadow-xl min-h-[24rem] sm:min-h-[28rem] lg:min-h-[34rem]">
+            <div id="map" class="absolute inset-0"></div>
+
+            <!-- Standort-Umschalter, liegt über der Karte -->
+            <div id="map-switch" class="hidden absolute top-4 left-4 right-4 z-20 flex flex-wrap gap-2">
+              <button type="button" class="map-tab btn px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-primary-foreground shadow-lg" data-location="0" aria-pressed="true">Hafen</button>
+              <button type="button" class="map-tab btn px-4 py-2 rounded-xl text-sm font-semibold bg-card/90 backdrop-blur-sm text-foreground shadow-lg" data-location="1" aria-pressed="false">Büro</button>
+              <button type="button" class="map-tab btn px-4 py-2 rounded-xl text-sm font-semibold bg-card/90 backdrop-blur-sm text-foreground shadow-lg" data-location="2" aria-pressed="false">Halle / Werkstatt</button>
+            </div>
+
+            <!-- Datenschutz-Overlay: Karte wird erst nach Klick geladen -->
+            <div id="map-consent" class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center gap-4 p-8 bg-muted">
+              <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                </svg>
+              </div>
+              <h3 class="font-display text-2xl text-foreground">Karte anzeigen</h3>
+              <p class="text-sm text-muted-foreground max-w-sm leading-relaxed">
+                Beim Laden der Karte werden Daten an Google übertragen. Mehr dazu in unserer
+                <a href="#" class="underline hover:text-primary transition-colors">Datenschutzerklärung</a>.
+              </p>
+              <button type="button" id="map-load-btn" class="btn inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold shadow-lg">
+                Karte laden
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </button>
+              <p id="map-error" class="hidden text-sm text-red-700 max-w-sm"></p>
+            </div>
+          </div>
+
+          <!-- Standortliste -->
+          <div class="lg:col-span-2 flex flex-col gap-4">
+
+            <!-- Hafen -->
+            <button type="button" class="location-card tile text-left w-full bg-card rounded-2xl shadow-lg p-6 sm:p-7 is-active reveal" data-location="0">
+              <div class="flex items-start gap-4">
+                <span class="loc-icon inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-primary/10 flex-shrink-0">
+                  <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a1 1 0 011 1v1.07A7.002 7.002 0 0119 11a1 1 0 11-2 0 5 5 0 00-4-4.9V17h3a1 1 0 110 2h-3v2a1 1 0 11-2 0v-2H8a1 1 0 110-2h3V6.1A5 5 0 007 11a1 1 0 11-2 0 7.002 7.002 0 016-6.93V3a1 1 0 011-1z"></path>
+                  </svg>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-display text-lg text-card-foreground mb-1">Hafen</p>
+                  <p class="text-muted-foreground text-sm leading-relaxed">Am Gudelacksee 2<br>16835 Lindow (Mark)</p>
+                  <p class="text-muted-foreground text-sm mt-2">Hafenmeister: <a href="tel:+4915237616018" class="font-medium text-primary hover:underline">0152 37616018</a></p>
+                </div>
+              </div>
+            </button>
+
+            <!-- Büro -->
+            <button type="button" class="location-card tile text-left w-full bg-card rounded-2xl shadow-lg p-6 sm:p-7 reveal" data-location="1">
+              <div class="flex items-start gap-4">
+                <span class="loc-icon inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-primary/10 flex-shrink-0">
+                  <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-display text-lg text-card-foreground mb-1">Büro</p>
+                  <p class="text-muted-foreground text-sm leading-relaxed">Straße des Friedens 54-55<br>16835 Lindow (Mark)</p>
+                  <p class="text-muted-foreground text-sm mt-2">Sprechzeiten: Mo – Fr 9.00 – 12.00 Uhr</p>
+                </div>
+              </div>
+            </button>
+
+            <!-- Halle / Werkstatt -->
+            <button type="button" class="location-card tile text-left w-full bg-card rounded-2xl shadow-lg p-6 sm:p-7 reveal" data-location="2">
+              <div class="flex items-start gap-4">
+                <span class="loc-icon inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-primary/10 flex-shrink-0">
+                  <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                  </svg>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-display text-lg text-card-foreground mb-1">Halle / Werkstatt</p>
+                  <p class="text-muted-foreground text-sm leading-relaxed">Hallenlager, Winterlager<br>und Bootsservice</p>
+                  <p class="text-muted-foreground text-sm mt-2">Zufahrt nach Absprache</p>
+                </div>
+              </div>
+            </button>
+
+            <!-- Kontaktzeile + Route -->
+            <div class="bg-card rounded-2xl shadow-lg p-6 sm:p-7 mt-auto tile reveal">
+              <div class="space-y-3 mb-5">
+                <a href="tel:03393371908" class="flex items-center gap-3 text-card-foreground hover:text-primary transition-colors">
+                  <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  <span class="font-medium">033933 71908</span>
+                </a>
+                <a href="mailto:info@yachthafen-lindow.de" class="flex items-center gap-3 text-card-foreground hover:text-primary transition-colors">
+                  <svg class="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  <span class="font-medium">info@yachthafen-lindow.de</span>
+                </a>
+              </div>
+              <a id="route-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Am+Gudelacksee+2%2C+16835+Lindow"
+                 target="_blank" rel="noopener noreferrer"
+                 class="btn inline-flex w-full items-center justify-center gap-2 px-6 py-4 bg-primary text-primary-foreground rounded-xl font-semibold shadow-lg">
+                <span id="route-label">Route zum Hafen</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="relative">
+    <!-- Background Image -->
+    <div class="relative h-64 sm:h-80">
+      <img src="img/IMG_6878.jpg" alt="Yachthafen Lindow Marina" class="w-full h-full object-cover" loading="lazy" decoding="async">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-secondary"></div>
+    </div>
+
+    <!-- Footer Content -->
+    <div class="bg-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <!-- Main Footer Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16 mb-12">
+          <!-- Address Column -->
+          <div>
+            <h3 class="font-display text-xl text-secondary-foreground mb-6">Yachthafen Lindow</h3>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <div class="text-secondary-foreground/80">
+                  <p>Am Gudelacksee 2</p>
+                  <p>16835 Lindow</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Office Column -->
+          <div>
+            <h3 class="font-display text-xl text-secondary-foreground mb-6">Büro</h3>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <div class="text-secondary-foreground/80">
+                  <p>Straße des Friedens 54-55</p>
+                  <p>16835 Lindow</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-secondary-foreground/80">Mo - Fr: 9.00 - 12.00 Uhr</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Column -->
+          <div>
+            <h3 class="font-display text-xl text-secondary-foreground mb-6">Kontakt</h3>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                </svg>
+                <a href="tel:03393371908" class="text-secondary-foreground/80 hover:text-accent transition-colors">033933-71908</a>
+              </div>
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <a href="mailto:info@yachthafen-lindow.de" class="text-secondary-foreground/80 hover:text-accent transition-colors">info@yachthafen-lindow.de</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="pt-8">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <img src="img/logo-yachthafen-lindow-light.svg" alt="Yachthafen Lindow"
+                   class="h-8 w-auto" width="561" height="76" loading="lazy" decoding="async">
+              <span class="text-sm text-secondary-foreground/60">© 2026 Yachthafen Lindow</span>
+            </div>
+
+            <!-- Legal Links -->
+            <div class="flex items-center gap-6">
+              <a href="#" class="text-sm text-secondary-foreground/60 hover:text-accent transition-colors">Datenschutz</a>
+              <span class="text-secondary-foreground/30">|</span>
+              <a href="#" class="text-sm text-secondary-foreground/60 hover:text-accent transition-colors">Impressum</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('hidden', !isMenuOpen);
+      menuIcon.classList.toggle('hidden', isMenuOpen);
+      closeIcon.classList.toggle('hidden', !isMenuOpen);
+      mobileMenuBtn.setAttribute('aria-label', isMenuOpen ? 'Menü schließen' : 'Menü öffnen');
+    }
+
+    mobileMenuBtn.addEventListener('click', toggleMenu);
+
+    // Close mobile menu when clicking a link
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (isMenuOpen) {
+          toggleMenu();
+        }
+      });
+    });
+
+    // Aufklappbare Kacheln ("Mehr erfahren")
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      const panel = document.getElementById(trigger.getAttribute('aria-controls'));
+      const label = trigger.querySelector('.accordion-label');
+      if (!panel) return;
+
+      trigger.addEventListener('click', () => {
+        const willOpen = trigger.getAttribute('aria-expanded') !== 'true';
+        trigger.setAttribute('aria-expanded', String(willOpen));
+        panel.classList.toggle('is-open', willOpen);
+        if (label) {
+          label.textContent = willOpen ? 'Weniger anzeigen' : 'Mehr erfahren';
+        }
+      });
+    });
+
+    // Service-Ticker: zweite Kopie der Liste erzeugen und Animation starten
+    (function initTicker() {
+      const ticker = document.getElementById('service-ticker');
+      if (!ticker) return;
+      const track = ticker.querySelector('.ticker-track');
+      const list = ticker.querySelector('.ticker-list');
+      if (!track || !list) return;
+
+      const clone = list.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+      ticker.classList.add('is-running');
+
+      // Tempo an die Breite koppeln, damit die Geschwindigkeit konstant bleibt
+      const setSpeed = () => {
+        const pxPerSecond = 60;
+        const duration = Math.max(20, list.scrollWidth / pxPerSecond);
+        ticker.style.setProperty('--ticker-duration', duration + 's');
+      };
+      setSpeed();
+      window.addEventListener('resize', setSpeed);
+    })();
+
+    // Smooth scroll for anchor links (fallback for older browsers)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const target = document.querySelector(targetId);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    /* ==================== GOOGLE MAPS ====================
+       1. API-Key unter https://console.cloud.google.com anlegen
+          (Maps JavaScript API aktivieren, Key auf die eigene Domain beschränken).
+          Optional zusätzlich die Geocoding API – dann korrigiert die Karte die
+          Pin-Positionen automatisch anhand der unten eingetragenen Adressen.
+       2. Key hier eintragen – die Karte lädt erst nach Klick auf "Karte laden".
+    ==================================================== */
+    const GOOGLE_MAPS_API_KEY = '';
+
+    /* Die drei Standorte. "address" steuert auch den Routen-Link,
+       "position" ist die Startposition des Pins.
+       HINWEIS: Hafen ist exakt. Büro und Halle/Werkstatt bitte prüfen –
+       für die Halle ist noch keine Adresse hinterlegt. */
+    const LOCATIONS = [
+      {
+        id: 'hafen',
+        name: 'Hafen',
+        address: 'Am Gudelacksee 2, 16835 Lindow (Mark)',
+        lines: ['Am Gudelacksee 2', '16835 Lindow (Mark)'],
+        note: 'Stege, Gastliegeplätze, Hafenbistro',
+        position: { lat: 52.972317, lng: 12.982922 }
+      },
+      {
+        id: 'buero',
+        name: 'Büro',
+        address: 'Straße des Friedens 54-55, 16835 Lindow (Mark)',
+        lines: ['Straße des Friedens 54-55', '16835 Lindow (Mark)'],
+        note: 'Sprechzeiten Mo – Fr 9.00 – 12.00 Uhr',
+        position: { lat: 52.96685, lng: 12.98545 }   // ungefähr – bitte prüfen
+      },
+      {
+        id: 'halle',
+        name: 'Halle / Werkstatt',
+        address: 'Am Gudelacksee 2, 16835 Lindow (Mark)',   // TODO: echte Hallenadresse eintragen
+        lines: ['Hallenlager und Werkstatt', '16835 Lindow (Mark)'],
+        note: 'Winterlager, Service, Zufahrt nach Absprache',
+        position: { lat: 52.97105, lng: 12.98025 }   // TODO: echte Position eintragen
+      }
+    ];
+
+    // Kartenfarben passend zur Website-Palette
+    const MAP_STYLE = [
+      { elementType: 'geometry', stylers: [{ color: '#f0ede8' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#4a6485' }] },
+      { elementType: 'labels.text.stroke', stylers: [{ color: '#f7f5f2' }] },
+      { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+      { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#e2ddd4' }] },
+      { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
+      { featureType: 'landscape.man_made', elementType: 'geometry', stylers: [{ color: '#e8e4de' }] },
+      { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#e6e2da' }] },
+      { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#dde2d3' }] },
+      { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#7d8a72' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#f7f5f2' }] },
+      { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#ece7de' }] },
+      { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#ecdcc6' }] },
+      { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#e0c5a3' }] },
+      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#a3b6cd' }] },
+      { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#1e3a5f' }] }
+    ];
+
+    const mapConsent  = document.getElementById('map-consent');
+    const mapLoadBtn  = document.getElementById('map-load-btn');
+    const mapError    = document.getElementById('map-error');
+    const mapSwitch   = document.getElementById('map-switch');
+    const routeLink   = document.getElementById('route-link');
+    const routeLabel  = document.getElementById('route-label');
+    const locationCards = Array.from(document.querySelectorAll('.location-card'));
+    const mapTabs       = Array.from(document.querySelectorAll('.map-tab'));
+
+    let mapInstance = null;
+    let markers = [];
+    let infoWindow = null;
+    let activeLocation = 0;
+
+    function pinIcon(active) {
+      const body = active ? '#1e3a5f' : '#6f86a4';
+      const dot  = active ? '#d4a574' : '#f7f5f2';
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="60" viewBox="0 0 48 60">' +
+        '<path d="M24 2C13.5 2 5 10.5 5 21c0 13.5 19 37 19 37s19-23.5 19-37C43 10.5 34.5 2 24 2z" fill="' + body + '"/>' +
+        '<circle cx="24" cy="21" r="8" fill="' + dot + '"/></svg>';
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function routeUrl(loc) {
+      return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(loc.address);
+    }
+
+    // Routen-Button folgt dem gewählten Standort – auch ohne geladene Karte
+    function syncRoute(index) {
+      const loc = LOCATIONS[index];
+      if (routeLink)  routeLink.href = routeUrl(loc);
+      if (routeLabel) routeLabel.textContent = 'Route zum ' + (loc.id === 'hafen' ? 'Hafen' : loc.name);
+    }
+
+    function setActiveLocation(index, options) {
+      const opts = options || {};
+      activeLocation = index;
+      const loc = LOCATIONS[index];
+
+      locationCards.forEach((card, i) => card.classList.toggle('is-active', i === index));
+
+      mapTabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute('aria-pressed', String(on));
+        tab.classList.toggle('bg-primary', on);
+        tab.classList.toggle('text-primary-foreground', on);
+        tab.classList.toggle('bg-card/90', !on);
+        tab.classList.toggle('text-foreground', !on);
+      });
+
+      syncRoute(index);
+
+      if (mapInstance) {
+        markers.forEach((m, i) => m.setIcon({
+          url: pinIcon(i === index),
+          scaledSize: new google.maps.Size(i === index ? 48 : 40, i === index ? 60 : 50),
+          anchor: new google.maps.Point(i === index ? 24 : 20, i === index ? 58 : 48)
+        }));
+        if (opts.pan !== false) {
+          mapInstance.panTo(markers[index].getPosition());
+          mapInstance.setZoom(16);
+        }
+        if (infoWindow) {
+          infoWindow.setContent(
+            '<div style="font-family:Inter,system-ui,sans-serif;color:#1e3a5f;padding:2px 4px;line-height:1.5">' +
+            '<strong>' + loc.name + '</strong><br>' + loc.lines.join('<br>') +
+            '<br><span style="color:#4a6485">' + loc.note + '</span></div>'
+          );
+          infoWindow.open({ anchor: markers[index], map: mapInstance });
+        }
+      }
+    }
+
+    locationCards.forEach(card => {
+      card.addEventListener('click', () => {
+        setActiveLocation(Number(card.dataset.location));
+        if (!mapInstance && mapLoadBtn && GOOGLE_MAPS_API_KEY) mapLoadBtn.click();
+      });
+    });
+    mapTabs.forEach(tab => {
+      tab.addEventListener('click', () => setActiveLocation(Number(tab.dataset.location)));
+    });
+
+    function showMapError(text) {
+      if (!mapError) return;
+      mapError.textContent = text;
+      mapError.classList.remove('hidden');
+    }
+
+    // Callback für die Google-Maps-API
+    window.initMarinaMap = function () {
+      mapInstance = new google.maps.Map(document.getElementById('map'), {
+        center: LOCATIONS[0].position,
+        zoom: 15,
+        styles: MAP_STYLE,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        zoomControl: true,
+        gestureHandling: 'cooperative'
+      });
+
+      infoWindow = new google.maps.InfoWindow();
+
+      markers = LOCATIONS.map((loc, i) => {
+        const marker = new google.maps.Marker({
+          position: loc.position,
+          map: mapInstance,
+          title: loc.name,
+          icon: {
+            url: pinIcon(i === 0),
+            scaledSize: new google.maps.Size(i === 0 ? 48 : 40, i === 0 ? 60 : 50),
+            anchor: new google.maps.Point(i === 0 ? 24 : 20, i === 0 ? 58 : 48)
+          }
+        });
+        marker.addListener('click', () => setActiveLocation(i));
+        return marker;
+      });
+
+      // Wenn die Geocoding API freigeschaltet ist, Pins anhand der Adressen nachjustieren
+      if (google.maps.Geocoder) {
+        const geocoder = new google.maps.Geocoder();
+        LOCATIONS.forEach((loc, i) => {
+          geocoder.geocode({ address: loc.address, region: 'de' }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+              const pos = results[0].geometry.location;
+              loc.position = { lat: pos.lat(), lng: pos.lng() };
+              markers[i].setPosition(pos);
+              if (i === activeLocation) mapInstance.panTo(pos);
+            }
+          });
+        });
+      }
+
+      // alle drei Standorte einpassen, dann auf den aktiven zoomen
+      const bounds = new google.maps.LatLngBounds();
+      LOCATIONS.forEach(l => bounds.extend(l.position));
+      mapInstance.fitBounds(bounds, 80);
+
+      if (mapSwitch) mapSwitch.classList.remove('hidden');
+      if (mapConsent) mapConsent.classList.add('hidden');
+      setActiveLocation(activeLocation, { pan: false });
+    };
+
+    if (mapLoadBtn) {
+      mapLoadBtn.addEventListener('click', () => {
+        if (!GOOGLE_MAPS_API_KEY) {
+          showMapError('Es ist noch kein Google-Maps-API-Key hinterlegt. Bitte in der index.html bei GOOGLE_MAPS_API_KEY eintragen.');
+          return;
+        }
+        mapLoadBtn.disabled = true;
+        mapLoadBtn.textContent = 'Karte wird geladen …';
+
+        const script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY +
+                     '&callback=initMarinaMap&language=de&region=DE&loading=async';
+        script.async = true;
+        script.onerror = () => {
+          mapLoadBtn.disabled = false;
+          mapLoadBtn.textContent = 'Erneut versuchen';
+          showMapError('Die Karte konnte nicht geladen werden. Bitte später erneut versuchen.');
+        };
+        document.head.appendChild(script);
+      });
+    }
+
+    // Standort-Auswahl auch ohne geladene Karte sinnvoll vorbelegen
+    if (locationCards.length) setActiveLocation(0, { pan: false });
+
+    /* ==================== LADEVERHALTEN & ÜBERGÄNGE ==================== */
+    // Bilder weich einblenden, sobald sie geladen sind
+    (function fadeInImages() {
+      const imgs = document.querySelectorAll('img[loading="lazy"]');
+      imgs.forEach(img => {
+        if (img.complete && img.naturalWidth > 0) {
+          img.classList.add('is-loaded');
+        } else {
+          img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+          img.addEventListener('error', () => img.classList.add('is-loaded'), { once: true });
+        }
+      });
+    })();
+
+    // Abschnitte beim Hereinscrollen einblenden
+    (function revealOnScroll() {
+      const items = document.querySelectorAll('.reveal');
+      if (!items.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+
+      // Nebeneinanderliegende Elemente leicht versetzt einblenden
+      items.forEach(el => {
+        if (el.dataset.delay) return;
+        const siblings = Array.from(el.parentElement ? el.parentElement.children : [])
+          .filter(c => c.classList.contains('reveal'));
+        const i = siblings.indexOf(el);
+        if (i > 0) el.style.transitionDelay = Math.min(i, 4) * 0.09 + 's';
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+      items.forEach(el => observer.observe(el));
+    })();
+
+    // Header background on scroll
+    const header = document.getElementById('main-header');
+    let lastScrollState = null;
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 50;
+      if (scrolled === lastScrollState) return;
+      lastScrollState = scrolled;
+      header.classList.toggle('shadow-lg', scrolled);
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
